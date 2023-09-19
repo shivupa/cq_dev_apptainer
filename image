@@ -16,7 +16,6 @@ From: ubuntu:22.04
    cd build
    cmake \
      -DCMAKE_BUILD_TYPE=Release \
-     -DBLAS_PREFERENCE_LIST=OpenBLAS \
      ..
    make -j20
    make install
