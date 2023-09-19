@@ -1,0 +1,52 @@
+bootStrap: docker
+From: ubuntu:22.04
+
+%post
+   apt-get -y update
+   apt-get -y install build-essential
+   apt-get -y install gcc gfortran
+   apt-get -y install git cmake libhdf5-dev
+   apt-get -y install libeigen3-dev libblas-dev liblapack-dev
+   cd /opt
+   #git clone https://github.com/shivupa/chronusq_dev.git
+   # libint
+   git clone https://urania.chem.washington.edu/chronusq/libint-cq.git
+   cd libint-cq
+   mkdir -p build
+   cd build
+   cmake \
+     -DCMAKE_BUILD_TYPE=Release \
+     -DBLAS_PREFERENCE_LIST=OpenBLAS \
+     ..
+   make -j20
+   make install
+   # cq
+   cd /opt
+   cp -r /mnt/chronusq_dev /opt
+   cd chronusq_dev
+   git checkout tdci_x2c_tdm
+   mkdir -p build
+   cd build
+   cmake \
+     -DCMAKE_BUILD_TYPE=Release \
+     -DCMAKE_C_COMPILER=gcc \
+     -DCMAKE_CXX_COMPILER=g++ \
+     -DCMAKE_Fortran_COMPILER=gfortran \
+     -DCMAKE_VERBOSE_MAKEFILE=ON \
+     -DCQ_ENABLE_MPI=OFF \
+     -DCQ_ENABLE_TA=OFF \
+     -DBUILD_TESTING=Off \
+     -DTA_TENSOR_MEM_PROFILE=ON \
+     ..
+   make -j20
+   apt-get -qy clean
+
+%environment
+   export LC_ALL=C
+   export PATH=/opt/chronusq_dev/build:$PATH
+
+%runscript
+   chronusq
+
+%labels
+   Author Shiv Upadhyay
