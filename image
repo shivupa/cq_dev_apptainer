@@ -1,12 +1,11 @@
 bootStrap: docker
-From: ubuntu:22.04
+From: archlinux:latest
 
 %post
-   apt-get -y update
-   apt-get -y install build-essential
-   apt-get -y install gcc gfortran
-   apt-get -y install git cmake libhdf5-dev
-   apt-get -y install libeigen3-dev libblas-dev liblapack-dev
+   pacman -Syuu --noconfirm
+   pacman -S --noconfirm git cmake hdf5 eigen ninja
+   pacman -S --noconfirm blas lapack
+   pacman -S --noconfirm gcc gcc-fortran
    cd /opt
    #git clone https://github.com/shivupa/chronusq_dev.git
    # libint
@@ -16,9 +15,10 @@ From: ubuntu:22.04
    cd build
    cmake \
      -DCMAKE_BUILD_TYPE=Release \
+     -G "Ninja" \
      ..
-   make -j20
-   make install
+   ninja
+   ninja install
    # cq
    cd /opt
    cp -r /mnt/chronusq_dev /opt
@@ -35,10 +35,9 @@ From: ubuntu:22.04
      -DCQ_ENABLE_MPI=OFF \
      -DCQ_ENABLE_TA=OFF \
      -DBUILD_TESTING=Off \
-     -DTA_TENSOR_MEM_PROFILE=ON \
+     -G "Ninja" \
      ..
-   make -j20
-   apt-get -qy clean
+   ninja
 
 %environment
    export LC_ALL=C
