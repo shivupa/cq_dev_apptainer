@@ -1,6 +1,7 @@
 # CQ Development Apptainer
 
 ## Directory structure
+Add a folder src with a `git clone` of cq inside.
 ```
 .
 ├── build.sh
